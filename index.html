@@ -116,8 +116,7 @@
     </div>
   </div>
 
-<script>
-    // 쩡, 네가 수정해둔 풀 데이터 고스란히 담아놨다.
+  <script>
     const QUIZ_POOL = {
       "친구": [
         { id: "f1", answer: "윤승원", question: "글씨 쓰기를 가장 잘하는 친구는 누구일까요? ✍️", sentence_template: "___(은/는) 글씨 쓰기를 잘해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
@@ -136,35 +135,34 @@
         { id: "t2", answer: "박정인 선생님", question: "우리에게 컴퓨터와 태블릿을 가르쳐 주시는 정보 선생님은 누구일까요? 💻", sentence_template: "정보 선생님은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
         { id: "t3", answer: "이수현 선생님", question: "과학을 가르쳐 주시는 분은 누구일까요? 🔬", sentence_template: "과학 과목을 가르쳐 주시는 분은 ___(이에요/예요).", options: ["이수현 선생님", "박정인 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
         { id: "t4", answer: "정유희 선생님", question: "교실에서 선생님과 함께 우리를 많이 도와주시는 분은 누구일까요? 👩‍🏫", sentence_template: "우리를 도와주시는 분은 ___(이에요/예요).", options: ["정유희 선생님", "이수현 선생님", "박정인 선생님", "정동진 선생님", "김경신 선생님"] },
-        { id: "t5", answer: "박정인 선생님", question: "교실에서 멋진 전동휠체어를 타고 다니시는 분은 누구일까요? 🦽", sentence_template: "전동휠체어를 타시는 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
-        { id: "t6", answer: "김경신 선생님", question: "음악을 가르쳐 주시는 분은 누구일까요? 🔬", sentence_template: "음악 과목을 가르쳐 주시는 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
-        { id: "t7", answer: "박정인 선생님", question: "동아리 시간에 태블릿 수업을 하시는 분은 누구일까요? 📱", sentence_template: "태블릿 수업을 하시는 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
-        { id: "t8", answer: "박정인 선생님", question: "태블릿으로 타자 연습을 가르쳐 주신 분은 누구일까요? ⌨️", sentence_template: "타자 연습을 가르쳐 주신 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
-        { id: "t9", answer: "박정인 선생님", question: "금요일 4교시에 우리와 함께 세탁 수업을 하시는 분은 누구일까요? 🧺", sentence_template: "세탁 수업을 하시는 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "이정구 선생님"] },
-        { id: "t10", answer: "박정인 선생님", question: "스포츠 시간에 다 같이 운동장에 같이 간 선생님은 누구일까요? 🏸", sentence_template: "스포츠 시간 운동장을 같이 간 선생님은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "이정구 선생님"] }
+        { id: "t5", answer: "전동휠체어", question: "박정인 선생님이 교실에서 타고 다니시는 것은? 🦽", sentence_template: "박정인 선생님은 ___(을/를) 타고 계셔요.", options: ["전동휠체어", "자동차", "자전거", "오토바이", "비행기"] },
+        { id: "t6", answer: "6개", question: "박정인 선생님의 전동휠체어 바퀴는 모두 몇 개일까요? 🛞", sentence_template: "선생님의 휠체어 바퀴는 ___(이에요/예요).", options: ["6개", "2개", "3개", "4개", "10개"] },
+        { id: "t7", answer: "타자", question: "태블릿 동아리 시간에 우리는 무엇을 연습했을까요? ⌨️", sentence_template: "태블릿으로 ___(을/를) 연습했어요.", options: ["타자", "노래", "그림 그리기", "달리기", "청소"] },
+        { id: "t8", answer: "닌텐도 배드민턴", question: "스포츠 시간에 다 같이 재미있게 한 게임은 무엇일까요? 🏸", sentence_template: "스포츠 시간에 ___(을/를) 했어요.", options: ["닌텐도 배드민턴", "축구", "농구", "수영", "숨바꼭질"] },
+        { id: "t9", answer: "세탁 수업", question: "박정인 선생님과 금요일 4교시에 하는 수업은? 🧺", sentence_template: "금요일 4교시에는 ___(을/를) 해요.", options: ["세탁 수업", "음악 수업", "국어 수업", "미술 수업", "요리 수업"] }
       ],
       "일상": [
-        { id: "d1", answer: "선생님을 만났을 때", question: "\"안녕하세요\" 하고 인사해야 할 때는 언제일까요? 🙇‍♀️", sentence_template: "___(은/는) '안녕하세요' 하고 인사해요.", options: ["선생님을 만났을 때", "밥 먹기 전", "화장실 갈 때", "집에 갈 때", "잠자기 전"] },
-        { id: "d2", answer: "급식을 먹기 전", question: "\"잘 먹겠습니다\" 하고 인사해야 할 때는 언제일까요? 🍚", sentence_template: "___(은/는) '잘 먹겠습니다' 하고 인사해요.", options: ["급식을 먹기 전", "학교에 올 때", "손 씻을 때", "집에 갈 때", "공부할 때"] },
-        { id: "d3", answer: "화장실", question: "쉬는 시간에 미리 다녀와야 하는 곳은 어디일까요? 🚽", sentence_template: "쉬는 시간에는 ___(을/를) 다녀와요.", options: ["화장실", "교장실", "식당", "운동장", "교무실"] },
-        { id: "d4", answer: "쉬는 시간", question: "목이 마를 때 물은 언제 마셔야 할까요? 💧", sentence_template: "물은 ___(에) 마셔야 해요.", options: ["쉬는 시간", "수업 시간", "국어 시간", "음악 시간", "달리기 할 때"] },
-        { id: "d5", answer: "양치", question: "밥을 다 먹고 나서 꼭 해야 하는 것은 무엇일까요? 🪥", sentence_template: "밥을 다 먹으면 ___(을/를) 해요.", options: ["양치", "세수", "목욕", "달리기", "노래 부르기"] },
-        { id: "d6", answer: "손", question: "밥을 먹기 전에 뽀득뽀득 깨끗하게 씻어야 하는 곳은 어디일까요? 🧼", sentence_template: "밥 먹기 전에는 ___(을/를) 씻어요.", options: ["손", "발", "머리", "귀", "코"] },
-        { id: "d7", answer: "내 자리", question: "쉬는 시간이 끝나고 종이 치면 어디에 앉아야 할까요? 🔔", sentence_template: "종이 치면 ___(에) 앉아요.", options: ["내 자리", "바닥", "책상 위", "화장실", "복도"] },
-        { id: "d8", answer: "실내화", question: "아침에 학교에 오면 무엇으로 갈아신어야 할까요? 👟", sentence_template: "학교에 오면 ___(으로/로) 갈아신어요.", options: ["실내화", "장화", "축구화", "수면양말", "등산화"] },
-        { id: "d9", answer: "내 신발", question: "학교를 마치고 집에 갈 때는 무엇으로 갈아신어야 할까요? 🎒", sentence_template: "집에 갈 때는 ___(으로/로) 갈아신어요.", options: ["내 신발", "실내화", "장갑", "양말", "맨발"] },
-        { id: "d10", answer: "목요일", question: "오늘은 무슨 요일일까요? 📅", sentence_template: "오늘은 ___(이에요/예요).", options: ["목요일", "월요일", "화요일", "수요일", "금요일"] },
-        { id: "d11", answer: "7월 20일", question: "우리 반이 기다리고 기다리는 신나는 여름방학은 언제일까요? 🏖️", sentence_template: "우리 여름방학은 ___(이에요/예요).", options: ["7월 20일", "5월 5일", "12월 25일", "1월 1일", "10월 11일"] }
+        { id: "d1", answer: "안녕하세요", question: "선생님을 만났을 때는 어떻게 인사할까요? 🙇‍♀️", sentence_template: "선생님을 만나면 '___' 하고 인사해요.", options: ["안녕하세요", "안녕히 계세요", "잘 먹겠습니다", "잘 먹었습니다", "미안합니다"] },
+        { id: "d2", answer: "잘 먹겠습니다", question: "급식 먹기 전에는 어떻게 인사할까요? 🍚", sentence_template: "밥을 먹기 전에는 '___' 하고 인사해요.", options: ["잘 먹겠습니다", "안녕하세요", "안녕히 주무세요", "고맙습니다", "미안합니다"] },
+        { id: "d3", answer: "쉬는 시간", question: "화장실은 언제 가야 할까요? 🚽", sentence_template: "화장실은 ___(에) 가요.", options: ["쉬는 시간", "수업 시간", "밥 먹을 때", "잠잘 때", "집에 갈 때"] },
+        { id: "d4", answer: "쉬는 시간", question: "물은 언제 마시러 가는 게 좋을까요? 💧", sentence_template: "물은 ___(에) 마시러 가요.", options: ["쉬는 시간", "수업 시간", "화장실 갈 때", "선생님 말씀할 때", "집에 갈 때"] },
+        { id: "d5", answer: "양치", question: "밥을 먹고 나서는 무엇을 해야 할까요? 🪥", sentence_template: "밥을 다 먹고 나서는 ___(을/를) 해요.", options: ["양치", "세수", "목욕", "달리기", "낮잠"] },
+        { id: "d6", answer: "손", question: "밥을 먹기 전에는 무엇을 씻어야 할까요? 🧼", sentence_template: "밥을 먹기 전에는 깨끗하게 ___(을/를) 씻어요.", options: ["손", "발", "머리", "귀", "코"] },
+        { id: "d7", answer: "자리", question: "쉬는 시간이 끝나고 종이 치면 어떻게 해야 할까요? 🔔", sentence_template: "종이 치면 ___(에) 앉아요.", options: ["자리", "바닥", "책상 위", "화장실", "운동장"] },
+        { id: "d8", answer: "실내화", question: "아침에 학교에 오면 무엇으로 갈아신을까요? 👟", sentence_template: "학교에 오면 ___(으로/로) 갈아신어요.", options: ["실내화", "장화", "슬리퍼", "수면양말", "등산화"] },
+        { id: "d9", answer: "신발", question: "학교를 마치고 집에 갈 때는 무엇으로 갈아신을까요? 🎒", sentence_template: "집에 갈 때는 ___(으로/로) 갈아신어요.", options: ["신발", "실내화", "장갑", "양말", "맨발"] },
+        { id: "d10", answer: "목요일", question: "우리 반 공개수업을 하는 오늘은 무슨 요일일까요? 📅", sentence_template: "오늘은 ___(이에요/예요).", options: ["목요일", "월요일", "화요일", "수요일", "금요일"] },
+        { id: "d11", answer: "7월 20일", question: "우리 반이 기다리고 기다리는 여름방학은 언제일까요? 🏖️", sentence_template: "우리 여름방학은 ___(이에요/예요).", options: ["7월 20일", "5월 5일", "12월 25일", "1월 1일", "10월 11일"] }
       ],
       "학교": [
         { id: "s1", answer: "3학년 2반", question: "우리는 몇 학년 몇 반일까요? 🏫", sentence_template: "우리 반은 ___(이에요/예요).", options: ["3학년 2반", "3학년 1반", "3학년 3반", "3학년 4반", "2학년 2반"] },
-        { id: "s2", answer: "중학생", question: "초등학생인 우리는 내년에 무엇이 될까요? 🎒", sentence_template: "우리는 내년에 ___(이/가) 돼요.", options: ["중학생", "고등학생", "초등학생", "대학생", "선생님"] },
-        { id: "s3", answer: "2층", question: "컴퓨터실은 몇 층에 있을까요? 💻", sentence_template: "컴퓨터실은 ___(이에요/예요).", options: ["2층", "1층", "3층", "4층", "5층"] },
-        { id: "s4", answer: "1층", question: "음악실은 몇 층에 있을까요? 🎵", sentence_template: "음악실은 ___(이에요/예요).", options: ["1층", "2층", "3층", "4층", "5층"] },
-        { id: "s5", answer: "강당", question: "큰 공을 가지고 놀 수 있는 넓은 곳은 어디일까요? 🎈", sentence_template: "큰 공이 있는 곳은 ___(이에요/예요).", options: ["강당", "컴퓨터실", "화장실", "교실", "급식실"] },
-        { id: "s6", answer: "꿈오름 장터", question: "우리 학교에서 열리는 장터의 이름은 무엇일까요? 🎪", sentence_template: "우리 학교 장터는 ___(이에요/예요).", options: ["꿈오름 장터", "별빛 장터", "무지개 장터", "햇살 장터", "행복 장터"] },
-        { id: "s7", answer: "일상생활 훈련실", question: "세탁기도 있고 요리도 할 수 있는 우리 학교의 특별실은 어디일까요? 🏫", sentence_template: "그곳은 ___(이에요/예요).", options: ["일상생활 훈련실", "피시방", "오락실", "만화방", "수영장"] },
-        { id: "s8", answer: "3층", question: "체력을 튼튼하게 기르는 체력단련실은 몇 층에 있을까요? 💪", sentence_template: "체력단련실은 ___(이에요/예요).", options: ["3층", "1층", "2층", "4층", "5층"] }
+        { id: "s2", answer: "고등학생", question: "우리는 내년에 무엇이 될까요? 🎒", sentence_template: "우리는 내년에 ___(이/가) 돼요.", options: ["고등학생", "중학생", "초등학생", "대학생", "선생님"] },
+        { id: "s3", answer: "2층", question: "컴퓨터실은 몇 층에 있을까요? 💻", sentence_template: "컴퓨터실은 ___(에) 있어요.", options: ["2층", "1층", "3층", "4층", "5층"] },
+        { id: "s4", answer: "1층", question: "음악실은 몇 층에 있을까요? 🎵", sentence_template: "음악실은 ___(에) 있어요.", options: ["1층", "2층", "3층", "4층", "5층"] },
+        { id: "s5", answer: "큰 공", question: "강당에는 무엇이 있을까요? 🎈", sentence_template: "강당에는 ___(이/가) 있어요.", options: ["큰 공", "세탁기", "컴퓨터", "가야금", "냄비"] },
+        { id: "s6", answer: "자전거", question: "운동장에 나가면 무엇을 탈까요? 🚲", sentence_template: "운동장에서는 ___(을/를) 타요.", options: ["자전거", "버스", "택시", "비행기", "기차"] },
+        { id: "s7", answer: "세탁기", question: "세탁실에 가면 무엇이 있을까요? 🌀", sentence_template: "세탁실에는 ___(이/가) 있어요.", options: ["세탁기", "냉장고", "전자레인지", "텔레비전", "피아노"] },
+        { id: "s8", answer: "피아노", question: "음악실에 있는 악기는 무엇일까요? 🎹", sentence_template: "음악실에는 ___(이/가) 있어요.", options: ["피아노", "컴퓨터", "세탁기", "건조기", "자전거"] }
       ]
     };
 
@@ -217,7 +215,7 @@
           gainNode.gain.linearRampToValueAtTime(0, now + 0.25);
           osc.start(now);
           osc.stop(now + 0.25);
-        } else if (type === 'wrong') { // 오답 효과음 추가
+        } else if (type === 'wrong') {
           osc.type = 'sawtooth';
           osc.frequency.setValueAtTime(150, now);
           osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
@@ -326,17 +324,14 @@
         btn.className = 'btn btn-option';
         btn.innerText = opt;
         btn.onclick = () => {
-          // 핵심: 친구 카테고리거나 정답일 때만 통과
           if (currentCategory === "친구" || opt === q.answer) {
             playSound('correct'); 
             vibrate([100, 50, 100]); 
             handleAnswer(q, opt);
           } else {
-            // 오답일 때 피드백
             playSound('wrong');
             vibrate([50, 50, 50]);
             
-            // 틀렸다는 표시로 버튼 색 변하고 흔들림
             btn.style.transition = 'all 0.1s';
             btn.style.backgroundColor = '#ffcdd2';
             btn.style.color = '#c62828';
@@ -346,7 +341,6 @@
             setTimeout(() => btn.style.transform = 'translateX(-10px)', 100);
             setTimeout(() => btn.style.transform = 'translateX(0)', 150);
             
-            // 0.5초 뒤에 원래 색상으로 원복
             setTimeout(() => {
               btn.style.backgroundColor = '#bae1ff';
               btn.style.color = '#1e5885';
@@ -388,3 +382,5 @@
 
     window.onload = init;
   </script>
+</body>
+</html>
