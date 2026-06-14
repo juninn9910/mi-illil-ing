@@ -116,7 +116,7 @@
     </div>
   </div>
 
-  <script>
+<script>
     // 쩡, 네가 수정해둔 풀 데이터 고스란히 담아놨다.
     const QUIZ_POOL = {
       "친구": [
@@ -176,7 +176,6 @@
     let currentQuestions = [];
     let currentQuestionIndex = 0;
 
-    // 브라우저 내장 오디오 합성 엔진 (효과음 파일 필요 없음)
     let audioCtx = null;
 
     function initAudio() {
@@ -201,7 +200,6 @@
         const now = audioCtx.currentTime;
 
         if (type === 'click') {
-          // 가볍고 청량한 톡 카톡소리 느낌
           osc.type = 'sine';
           osc.frequency.setValueAtTime(450, now);
           osc.frequency.exponentialRampToValueAtTime(700, now + 0.04);
@@ -210,18 +208,24 @@
           osc.start(now);
           osc.stop(now + 0.04);
         } else if (type === 'correct') {
-          // 화사한 아케이드 실로폰 정답음 (도-미-솔 연속음)
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(523.25, now); // C5
-          osc.frequency.setValueAtTime(659.25, now + 0.07); // E5
-          osc.frequency.setValueAtTime(783.99, now + 0.14); // G5
+          osc.frequency.setValueAtTime(523.25, now); 
+          osc.frequency.setValueAtTime(659.25, now + 0.07); 
+          osc.frequency.setValueAtTime(783.99, now + 0.14); 
           gainNode.gain.setValueAtTime(0.12, now);
           gainNode.gain.linearRampToValueAtTime(0.12, now + 0.18);
           gainNode.gain.linearRampToValueAtTime(0, now + 0.25);
           osc.start(now);
           osc.stop(now + 0.25);
+        } else if (type === 'wrong') { // 오답 효과음 추가
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(150, now);
+          osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+          gainNode.gain.setValueAtTime(0.1, now);
+          gainNode.gain.linearRampToValueAtTime(0, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
         } else if (type === 'next') {
-          // 스르륵 넘어가는 소리
           osc.type = 'sine';
           osc.frequency.setValueAtTime(500, now);
           osc.frequency.exponentialRampToValueAtTime(850, now + 0.12);
@@ -235,14 +239,12 @@
       }
     }
 
-    // 진동
     function vibrate(duration = 50) {
       if (navigator.vibrate) {
         navigator.vibrate(duration);
       }
     }
 
-    // 조사 맞춤법 계산기
     function getJosa(word, josaType) {
       if (!word) return '';
       const lastChar = word.charCodeAt(word.length - 1);
@@ -323,7 +325,35 @@
         const btn = document.createElement('button');
         btn.className = 'btn btn-option';
         btn.innerText = opt;
-        btn.onclick = () => { playSound('correct'); vibrate([100, 50, 100]); handleAnswer(q, opt); };
+        btn.onclick = () => {
+          // 핵심: 친구 카테고리거나 정답일 때만 통과
+          if (currentCategory === "친구" || opt === q.answer) {
+            playSound('correct'); 
+            vibrate([100, 50, 100]); 
+            handleAnswer(q, opt);
+          } else {
+            // 오답일 때 피드백
+            playSound('wrong');
+            vibrate([50, 50, 50]);
+            
+            // 틀렸다는 표시로 버튼 색 변하고 흔들림
+            btn.style.transition = 'all 0.1s';
+            btn.style.backgroundColor = '#ffcdd2';
+            btn.style.color = '#c62828';
+            btn.style.transform = 'translateX(-10px)';
+            
+            setTimeout(() => btn.style.transform = 'translateX(10px)', 50);
+            setTimeout(() => btn.style.transform = 'translateX(-10px)', 100);
+            setTimeout(() => btn.style.transform = 'translateX(0)', 150);
+            
+            // 0.5초 뒤에 원래 색상으로 원복
+            setTimeout(() => {
+              btn.style.backgroundColor = '#bae1ff';
+              btn.style.color = '#1e5885';
+              btn.style.transition = 'all 0.2s ease';
+            }, 500);
+          }
+        };
         optionsDiv.appendChild(btn);
         optionsDiv.appendChild(document.createElement('br'));
       });
@@ -358,5 +388,3 @@
 
     window.onload = init;
   </script>
-</body>
-</html>
