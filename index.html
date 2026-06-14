@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>핵심어 퀴즈</title>
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      text-align: center;
+      background-color: #f4f7f6;
+      margin: 0;
+      padding: 20px;
+      user-select: none;
+      -webkit-user-select: none; /* 갤탭 텍스트 선택 방지 */
+    }
+    h1 { font-size: 36px; color: #333; margin-bottom: 30px; word-break: keep-all; }
+    h2 { font-size: 28px; color: #555; }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative; }
+    .btn {
+      display: inline-block;
+      font-size: 24px;
+      font-weight: bold;
+      padding: 20px 40px;
+      margin: 10px;
+      border-radius: 15px;
+      border: 2px solid #ccc;
+      background-color: #fff;
+      cursor: pointer;
+      transition: all 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(0.95); background-color: #e0e0e0; }
+    .btn-primary { background-color: #4CAF50; color: white; border: none; }
+    .btn-option { background-color: #e3f2fd; border-color: #90caf9; color: #1565c0; width: 80%; max-width: 400px; }
+    .hidden { display: none !important; }
+    #question-text { font-size: 32px; margin: 40px 0; font-weight: bold; word-break: keep-all; line-height: 1.4; }
+    
+    /* 피드백 오버레이 (문장 보여주는 곳) */
+    #feedback-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 10;
+    }
+    #feedback-text { font-size: 36px; font-weight: bold; color: #d32f2f; word-break: keep-all; margin: 20px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="app">
+    <div id="screen-student">
+      <h1>👋 퀴즈를 풀 친구는 누구인가요?</h1>
+      <div id="student-list"></div>
+    </div>
+
+    <div id="screen-category" class="hidden">
+      <h1>📚 어떤 핵심어를 공부할까요?</h1>
+      <div id="category-list"></div>
+    </div>
+
+    <div id="screen-quiz" class="hidden">
+      <h2 id="category-title"></h2>
+      <div id="question-text">질문 나오는 곳</div>
+      <div id="options-list"></div>
+      
+      <div id="feedback-overlay" class="hidden">
+        <div id="feedback-text"></div>
+        <button class="btn btn-primary" onclick="nextQuestion()">다음 문제 ➡️</button>
+      </div>
+    </div>
+
+    <div id="screen-finish" class="hidden">
+      <h1>🎉 참 잘했어요! 🎉</h1>
+      <button class="btn btn-primary" onclick="resetApp()">처음으로 돌아가기</button>
+    </div>
+  </div>
+
+  <script>
+    // 질문이랑 템플릿 싹 다 바꿨다. 템플릿에 ___(은/는) 이런 식으로 적어두면 알아서 조사 변환됨.
+    const QUIZ_POOL = {
+      "친구": [
+        { id: "f1", answer: "윤승원", question: "글씨 쓰기를 가장 잘하는 친구는 누구일까요? ✍️", sentence_template: "___(은/는) 글씨 쓰기를 잘해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
+        { id: "f2", answer: "윤승원", question: "재미있는 파파독을 좋아하는 친구는 누구일까요? 📺", sentence_template: "___(은/는) 파파독을 좋아해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
+        { id: "f3", answer: "김현민", question: "교실 청소를 쓱싹쓱싹 잘하는 친구는 누구일까요? 🧹", sentence_template: "___(은/는) 청소를 잘해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
+        { id: "f4", answer: "김현민", question: "작은 개미를 관찰하는 걸 좋아하는 친구는 누구일까요? 🐜", sentence_template: "___(은/는) 개미를 좋아해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
+        { id: "f5", answer: "박지후", question: "자리에 앉아서 공부를 잘하는 친구는 누구일까요? 📚", sentence_template: "___(은/는) 공부를 잘해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
+        { id: "f6", answer: "박지후", question: "신나는 야구 응원가를 좋아하는 친구는 누구일까요? ⚾", sentence_template: "___(은/는) 야구 응원가를 좋아해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
+        { id: "f7", answer: "신서연", question: "손을 번쩍 들고 발표를 잘하는 친구는 누구일까요? 🙋‍♀️", sentence_template: "___(은/는) 발표를 잘해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
+        { id: "f8", answer: "신서연", question: "귀여운 코코몽을 좋아하는 친구는 누구일까요? 🐵", sentence_template: "___(은/는) 코코몽을 좋아해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
+        { id: "f9", answer: "이한수", question: "무거운 것도 번쩍! 심부름을 잘하는 친구는 누구일까요? 💪", sentence_template: "___(은/는) 심부름을 잘해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] },
+        { id: "f10", answer: "이한수", question: "신나는 동요 듣기를 좋아하는 친구는 누구일까요? 🎶", sentence_template: "___(은/는) 동요 듣기를 좋아해요.", options: ["윤승원", "김현민", "박지후", "신서연", "이한수"] }
+      ],
+      "선생님": [
+        { id: "t1", answer: "이수현 선생님", question: "우리 담임 선생님은 누구일까요? 👩‍🏫", sentence_template: "우리 담임 선생님은 ___(이에요/예요).", options: ["이수현 선생님", "박정인 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
+        { id: "t2", answer: "박정인 선생님", question: "우리에게 컴퓨터와 태블릿을 가르쳐 주시는 정보 선생님은 누구일까요? 💻", sentence_template: "정보 선생님은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
+        { id: "t3", answer: "이수현 선생님", question: "과학을 가르쳐 주시는 분은 누구일까요? 🔬", sentence_template: "과학 과목을 가르쳐 주시는 분은 ___(이에요/예요).", options: ["이수현 선생님", "박정인 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
+        { id: "t4", answer: "정유희 선생님", question: "교실에서 선생님과 함께 우리를 많이 도와주시는 분은 누구일까요? 👩‍🏫", sentence_template: "우리를 도와주시는 분은 ___(이에요/예요).", options: ["정유희 선생님", "이수현 선생님", "박정인 선생님", "정동진 선생님", "김경신 선생님"] },
+        { id: "t5", answer: "박정인 선생님", question: "교실에서 멋진 전동휠체어를 타고 다니시는 분은 누구일까요? 🦽", sentence_template: "전동휠체어를 타시는 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
+        { id: "t6", answer: "김경신 선생님", question: "음악을 가르쳐 주시는 분은 누구일까요? 🔬", sentence_template: "음악 과목을 가르쳐 주시는 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
+        { id: "t7", answer: "박정인 선생님", question: "동아리 시간에 태블릿 수업을 하시는 분은 누구일까요? 📱", sentence_template: "태블릿 수업을 하시는 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
+        { id: "t8", answer: "박정인 선생님", question: "태블릿으로 타자 연습을 가르쳐 주신 분은 누구일까요? ⌨️", sentence_template: "타자 연습을 가르쳐 주신 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "정유희 선생님"] },
+        { id: "t9", answer: "박정인 선생님", question: "금요일 4교시에 우리와 함께 세탁 수업을 하시는 분은 누구일까요? 🧺", sentence_template: "세탁 수업을 하시는 분은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "이정구 선생님"] },
+        { id: "t10", answer: "박정인 선생님", question: "스포츠 시간에 다 같이 운동장에 같이 간 선생님은 누구일까요? 🏸", sentence_template: "스포츠 시간 운동장을 같이 간 선생님은 ___(이에요/예요).", options: ["박정인 선생님", "이수현 선생님", "정동진 선생님", "김경신 선생님", "이정구 선생님"] }
+      ],
+      "일상": [
+        { id: "d1", answer: "선생님을 만났을 때", question: "\"안녕하세요\" 하고 인사해야 할 때는 언제일까요? 🙇‍♀️", sentence_template: "___(은/는) '안녕하세요' 하고 인사해요.", options: ["선생님을 만났을 때", "밥 먹기 전", "화장실 갈 때", "집에 갈 때", "잠자기 전"] },
+        { id: "d2", answer: "급식을 먹기 전", question: "\"잘 먹겠습니다\" 하고 인사해야 할 때는 언제일까요? 🍚", sentence_template: "___(은/는) '잘 먹겠습니다' 하고 인사해요.", options: ["급식을 먹기 전", "학교에 올 때", "손 씻을 때", "집에 갈 때", "공부할 때"] },
+        { id: "d3", answer: "화장실", question: "쉬는 시간에 미리 다녀와야 하는 곳은 어디일까요? 🚽", sentence_template: "쉬는 시간에는 ___(을/를) 다녀와요.", options: ["화장실", "교장실", "식당", "운동장", "교무실"] },
+        { id: "d4", answer: "쉬는 시간", question: "목이 마를 때 물은 언제 마셔야 할까요? 💧", sentence_template: "물은 ___(에) 마셔야 해요.", options: ["쉬는 시간", "수업 시간", "국어 시간", "음악 시간", "달리기 할 때"] },
+        { id: "d5", answer: "양치", question: "밥을 다 먹고 나서 꼭 해야 하는 것은 무엇일까요? 🪥", sentence_template: "밥을 다 먹으면 ___(을/를) 해요.", options: ["양치", "세수", "목욕", "달리기", "노래 부르기"] },
+        { id: "d6", answer: "손", question: "밥을 먹기 전에 뽀득뽀득 깨끗하게 씻어야 하는 곳은 어디일까요? 🧼", sentence_template: "밥 먹기 전에는 ___(을/를) 씻어요.", options: ["손", "발", "머리", "귀", "코"] },
+        { id: "d7", answer: "내 자리", question: "쉬는 시간이 끝나고 종이 치면 어디에 앉아야 할까요? 🔔", sentence_template: "종이 치면 ___(에) 앉아요.", options: ["내 자리", "바닥", "책상 위", "화장실", "복도"] },
+        { id: "d8", answer: "실내화", question: "아침에 학교에 오면 무엇으로 갈아신어야 할까요? 👟", sentence_template: "학교에 오면 ___(으로/로) 갈아신어요.", options: ["실내화", "장화", "축구화", "수면양말", "등산화"] },
+        { id: "d9", answer: "내 신발", question: "학교를 마치고 집에 갈 때는 무엇으로 갈아신어야 할까요? 🎒", sentence_template: "집에 갈 때는 ___(으로/로) 갈아신어요.", options: ["내 신발", "실내화", "장갑", "양말", "맨발"] },
+        { id: "d10", answer: "목요일", question: "오늘은 무슨 요일일까요? 📅", sentence_template: "오늘은 ___(이에요/예요).", options: ["목요일", "월요일", "화요일", "수요일", "금요일"] },
+        { id: "d11", answer: "7월 20일", question: "우리 반이 기다리고 기다리는 신나는 여름방학은 언제일까요? 🏖️", sentence_template: "우리 여름방학은 ___(이에요/예요).", options: ["7월 20일", "5월 5일", "12월 25일", "1월 1일", "10월 11일"] }
+      ],
+      "학교": [
+        { id: "s1", answer: "3학년 2반", question: "우리는 몇 학년 몇 반일까요? 🏫", sentence_template: "우리 반은 ___(이에요/예요).", options: ["3학년 2반", "3학년 1반", "3학년 3반", "3학년 4반", "2학년 2반"] },
+        { id: "s2", answer: "중학생", question: "초등학생인 우리는 내년에 무엇이 될까요? 🎒", sentence_template: "우리는 내년에 ___(이/가) 돼요.", options: ["중학생", "고등학생", "초등학생", "대학생", "선생님"] },
+        { id: "s3", answer: "2층", question: "컴퓨터실은 몇 층에 있을까요? 💻", sentence_template: "컴퓨터실은 ___(이에요/예요).", options: ["2층", "1층", "3층", "4층", "5층"] },
+        { id: "s4", answer: "1층", question: "음악실은 몇 층에 있을까요? 🎵", sentence_template: "음악실은 ___(이에요/예요).", options: ["1층", "2층", "3층", "4층", "5층"] },
+        { id: "s5", answer: "강당", question: "큰 공을 가지고 놀 수 있는 넓은 곳은 어디일까요? 🎈", sentence_template: "큰 공이 있는 곳은 ___(이에요/예요).", options: ["강당", "컴퓨터실", "화장실", "교실", "급식실"] },
+        { id: "s6", answer: "꿈오름 장터", question: "우리 학교에서 열리는 장터의 이름은 무엇일까요? 🎪", sentence_template: "우리 학교 장터는 ___(이에요/예요).", options: ["꿈오름 장터", "별빛 장터", "무지개 장터", "햇살 장터", "행복 장터"] },
+        { id: "s7", answer: "일상생활 훈련실", question: "세탁기도 있고 요리도 할 수 있는 우리 학교의 특별실은 어디일까요? 🏫", sentence_template: "그곳은 ___(이에요/예요).", options: ["일상생활 훈련실", "피시방", "오락실", "만화방", "수영장"] },
+        { id: "s8", answer: "3층", question: "체력을 튼튼하게 기르는 체력단련실은 몇 층에 있을까요? 💪", sentence_template: "체력단련실은 ___(이에요/예요).", options: ["3층", "1층", "2층", "4층", "5층"] }
+      ]
+    };
+
+    // ★★★ 여기에 구글 시트에서 복사한 웹앱 URL 무조건 넣어라! ★★★
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwi1yeBc8oSxZ6GnrrLPL7bkRdco8pPOyJtKPTpJrVPEXxirrwRmVku01lagbvRw1-_IQ/exec";
+
+    const students = ["윤승원", "김현민", "박지후", "신서연", "이한수", "기타"];
+    let currentStudent = "";
+    let currentCategory = "";
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+
+    // 진동 (갤탭에서 터치할 때마다 울림)
+    function vibrate(duration = 50) {
+      if (navigator.vibrate) {
+        navigator.vibrate(duration);
+      }
+    }
+
+    // 조사 맞춤법 계산기
+    function getJosa(word, josaType) {
+      if (!word) return '';
+      const lastChar = word.charCodeAt(word.length - 1);
+      // 한글 아니면 대충 앞에 거 던짐
+      if (lastChar < 0xAC00 || lastChar > 0xD7A3) return josaType.split('/')[0]; 
+      
+      const hasBatchim = (lastChar - 0xAC00) % 28 > 0;
+
+      switch (josaType) {
+        case '은/는': return hasBatchim ? '은' : '는';
+        case '이/가': return hasBatchim ? '이' : '가';
+        case '을/를': return hasBatchim ? '을' : '를';
+        case '과/와': return hasBatchim ? '과' : '와';
+        case '이에요/예요': return hasBatchim ? '이에요' : '예요';
+        case '으로/로': return hasBatchim && ((lastChar - 0xAC00) % 28 !== 8) ? '으로' : '로'; // 'ㄹ' 받침 예외 처리
+        case '에': return '에'; // '에'는 변하지 않음
+        default: return '';
+      }
+    }
+
+    // 템플릿에 단어랑 조사 합체시키는 놈
+    function fillTemplate(template, answer) {
+      return template.replace(/___\((.*?)\)/, function(match, josaType) {
+         return answer + getJosa(answer, josaType);
+      });
+    }
+
+    function init() {
+      const studentDiv = document.getElementById('student-list');
+      students.forEach(name => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-primary';
+        btn.innerText = name;
+        btn.onclick = () => { vibrate(50); selectStudent(name); };
+        studentDiv.appendChild(btn);
+      });
+
+      const categoryDiv = document.getElementById('category-list');
+      Object.keys(QUIZ_POOL).forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.innerText = cat;
+        btn.onclick = () => { vibrate(50); selectCategory(cat); };
+        categoryDiv.appendChild(btn);
+      });
+    }
+
+    function selectStudent(name) {
+      currentStudent = name;
+      document.getElementById('screen-student').classList.add('hidden');
+      document.getElementById('screen-category').classList.remove('hidden');
+    }
+
+    function selectCategory(cat) {
+      currentCategory = cat;
+      currentQuestions = [...QUIZ_POOL[cat]];
+      currentQuestionIndex = 0;
+      
+      document.getElementById('category-title').innerText = `[ ${cat} ]`;
+      document.getElementById('screen-category').classList.add('hidden');
+      document.getElementById('screen-quiz').classList.remove('hidden');
+      
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestionIndex >= currentQuestions.length) {
+        document.getElementById('screen-quiz').classList.add('hidden');
+        document.getElementById('screen-finish').classList.remove('hidden');
+        return;
+      }
+
+      const q = currentQuestions[currentQuestionIndex];
+      document.getElementById('question-text').innerText = q.question;
+      
+      const optionsDiv = document.getElementById('options-list');
+      optionsDiv.innerHTML = "";
+      
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-option';
+        btn.innerText = opt;
+        btn.onclick = () => { vibrate(50); handleAnswer(q, opt); };
+        optionsDiv.appendChild(btn);
+        optionsDiv.appendChild(document.createElement('br'));
+      });
+    }
+
+    function handleAnswer(questionData, selectedOption) {
+      // 1. 구글 시트로 백그라운드 전송 (애들 화면 안 멈추게 비동기로 던짐)
+      const url = `${SCRIPT_URL}?student=${encodeURIComponent(currentStudent)}&category=${encodeURIComponent(currentCategory)}&question=${encodeURIComponent(questionData.question)}&answer=${encodeURIComponent(selectedOption)}`;
+      fetch(url, { method: 'GET', mode: 'no-cors' }).catch(err => console.error('시트 에러:', err));
+
+      // 2. 고른 답으로 문장 완성해서 피드백 띄우기
+      const completedSentence = fillTemplate(questionData.sentence_template, selectedOption);
+      document.getElementById('feedback-text').innerText = completedSentence;
+      document.getElementById('feedback-overlay').classList.remove('hidden');
+      
+      // 애들 맞췄다고 좀 더 길게 진동 줌
+      vibrate([100, 50, 100]); 
+    }
+
+    function nextQuestion() {
+      vibrate(50);
+      document.getElementById('feedback-overlay').classList.add('hidden');
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function resetApp() {
+      vibrate(50);
+      currentStudent = "";
+      currentCategory = "";
+      currentQuestions = [];
+      document.getElementById('screen-finish').classList.add('hidden');
+      document.getElementById('screen-student').classList.remove('hidden');
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
